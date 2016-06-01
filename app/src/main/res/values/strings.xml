@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">FragmentTabPractice1</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="public_top_title">衣服</string>
+    <string name="tvClose">衣服</string>
+    <string name="tvNotification">通知</string>
+    <string name="tvMy">我的</string>
+    <string name="tvCloseName">衣服名字</string>
+    <string name="tvClosePrice">￥ 100</string>
+</resources>
