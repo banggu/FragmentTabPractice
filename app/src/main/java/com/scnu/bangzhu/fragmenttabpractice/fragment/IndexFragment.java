@@ -66,7 +66,7 @@ public class IndexFragment extends Fragment implements View.OnClickListener,Swip
     public void setContents(){
         swipeRefreshLayout.setColorSchemeResources(R.color.swipe_scheme_color);
         swipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
-        swipeRefreshLayout.setProgressBackgroundColorSchemeColor(R.color.swipe_bg_color);
+//        swipeRefreshLayout.setProgressBackgroundColorSchemeColor(R.color.swipe_bg_color);
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.swipe_bg_color);
         swipeRefreshLayout.setProgressViewEndTarget(true, 200);
         lvShowClose.setEmptyView(tvNull);

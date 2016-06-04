@@ -1,5 +1,6 @@
 package com.scnu.bangzhu.fragmenttabpractice.activity;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,6 +22,7 @@ import com.scnu.bangzhu.fragmenttabpractice.adapter.MyFragmentStatePagerAdapter;
 import com.scnu.bangzhu.fragmenttabpractice.fragment.IndexFragment;
 import com.scnu.bangzhu.fragmenttabpractice.fragment.NotificationFragment;
 import com.scnu.bangzhu.fragmenttabpractice.fragment.UserInfoFragment;
+import com.slidingmenu.lib.SlidingMenu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private ImageView ivClose, ivNotification, ivMy;
     private FragmentManager fManager;
     private ViewPager viewPager;
+    private SlidingMenu slidingMenu;
+    private Button btn_toOnlyPic;
     private MyFragmentPagerAdapter myFragmentPagerAdapter;
     private MyFragmentStatePagerAdapter myFragmentStatePagerAdapter;
     private List<Fragment> fragmentList;
@@ -76,7 +81,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         ivNotification = (ImageView) findViewById(R.id.ivNotification);
         ivMy = (ImageView) findViewById(R.id.ivMy);
         viewPager = (ViewPager) findViewById(R.id.vpContent);
-
+        slidingMenu = new SlidingMenu(MainActivity.this);
         fragmentList = new ArrayList<Fragment>();
     }
 
@@ -92,6 +97,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         myFragmentStatePagerAdapter = new MyFragmentStatePagerAdapter(fManager, fragmentList);
         viewPager.setAdapter(myFragmentStatePagerAdapter);
 //        viewPager.setOffscreenPageLimit(3);
+        slidingMenu.setMode(SlidingMenu.LEFT);
+        slidingMenu.setBehindOffsetRes(R.dimen.sliding_menu_offset);
+        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        slidingMenu.attachToActivity(MainActivity.this, SlidingMenu.SLIDING_CONTENT);
+        slidingMenu.setMenu(R.layout.left_slidingmenu);
+        btn_toOnlyPic = (Button) slidingMenu.findViewById(R.id.btn_toOnlyPic);
     }
 
     public void setListeners(){
@@ -99,6 +110,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         llNotification.setOnClickListener(this);
         llMy.setOnClickListener(this);
         viewPager.addOnPageChangeListener(this);
+        btn_toOnlyPic.setOnClickListener(this);
     }
     @Override
     public void onClick(View v) {
@@ -138,6 +150,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 viewPager.setCurrentItem(PAGE_THREE);
                 ivMy.setImageResource(R.drawable.u18_select);
                 tvTitleName.setText(getResources().getString(R.string.tvMy));
+                break;
+            case R.id.btn_toOnlyPic:
+                Intent intent = new Intent(slidingMenu.getContext(), IndexActivity.class);
+                startActivity(intent);
                 break;
         }
 //        fTransaction.commit();

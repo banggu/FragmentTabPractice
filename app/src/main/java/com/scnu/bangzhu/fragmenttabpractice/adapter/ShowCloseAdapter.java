@@ -33,6 +33,7 @@ public class ShowCloseAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
 //    private ImageLoader imageLoader;
     private AsyncBitmapLoader1 asyncBitmapLoader;
+	
     public ShowCloseAdapter(Context context, List<Close> list){
         this.context = context;
         this.list = list;

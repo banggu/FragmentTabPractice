@@ -25,4 +25,6 @@ dependencies {
     compile files('libs/gson-2.2.4.jar')
     compile files('libs/picasso-2.4.0.jar')
     compile files('libs/universal-image-loader-1.9.3.jar')
+    compile files('libs/slidingmenu.jar')
+    compile 'com.android.support:recyclerview-v7:24.0.0-alpha1'
 }
