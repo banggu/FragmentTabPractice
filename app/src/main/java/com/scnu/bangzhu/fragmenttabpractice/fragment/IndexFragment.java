@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.scnu.bangzhu.fragmenttabpractice.R;
 import com.scnu.bangzhu.fragmenttabpractice.adapter.ShowCloseAdapter;
@@ -19,6 +20,8 @@ import com.scnu.bangzhu.fragmenttabpractice.util.DeviceUtil;
 import com.scnu.bangzhu.fragmenttabpractice.util.HttpCallbackListener;
 import com.scnu.bangzhu.fragmenttabpractice.util.HttpUtil;
 import com.scnu.bangzhu.fragmenttabpractice.util.JSONUtil;
+import com.scnu.bangzhu.fragmenttabpractice.util.LoadCloseTask;
+import com.scnu.bangzhu.fragmenttabpractice.util.NetWorkUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +44,8 @@ public class IndexFragment extends Fragment implements View.OnClickListener,Swip
     private int count, pageNumber=1;
     private int lastVisiblePosition = 0;
     private String baseUrl = "http://120.25.127.46/penderie/p/getClose?deviceId=865983023786230&pageNumber=";
+    private boolean isConnection;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if(null != rootView){
@@ -66,58 +71,64 @@ public class IndexFragment extends Fragment implements View.OnClickListener,Swip
     public void setContents(){
         swipeRefreshLayout.setColorSchemeResources(R.color.swipe_scheme_color);
         swipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
-//        swipeRefreshLayout.setProgressBackgroundColorSchemeColor(R.color.swipe_bg_color);
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.swipe_bg_color);
+        swipeRefreshLayout.setProgressViewOffset(false, 0, 24);
         swipeRefreshLayout.setProgressViewEndTarget(true, 200);
         lvShowClose.setEmptyView(tvNull);
         showCloseAdapter = new ShowCloseAdapter(getActivity(), closeList);
         lvShowClose.setAdapter(showCloseAdapter);
+        isConnection = NetWorkUtil.checkNetWorkConnection(getActivity());
 
         if(deviceId == null){
             deviceId = DeviceUtil.getDeviceId(getActivity().getBaseContext());
         }
-        Log.i("setContent", deviceId);
-//        String address = UrlUtil.getUrlString("getClose", deviceId);
         String address = baseUrl + pageNumber;
-        Log.i("setContent", address);
-        getClose(address);
+        if(isConnection){
+            getClose(address);
+        }else{
+            Toast.makeText(getActivity(), "无网络连接", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void getClose(String address) {
-        HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
+        new LoadCloseTask(address, showCloseAdapter, closeList, new LoadCloseTask.OnFinishListener() {
             @Override
-            public void onFinish(String response) {
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    JSONObject msg = obj.optJSONObject("msg");
-                    pageNumber = msg.getInt("pageNumber");
-                    Log.i("setContent", msg.toString());
-                    JSONArray jsonArray = msg.optJSONArray("close");
-                    Log.i("setContent", jsonArray.toString());
-                    count = msg.optInt("count");
-                    if (pageNumber == 1) {
-                        closeList.clear();
-                    } else {
-                    }
-                    if (jsonArray != null) {
-                        closeList.addAll(JSONUtil.getJsonList(jsonArray.toString(), Close.class));
-                        showCloseAdapter.notifyDataSetChanged();
-                    }
-                    tvNull.setVisibility(View.GONE);
-                    if (pageNumber == 1 && closeList.size() <= 0) {
-                        tvNull.setVisibility(View.VISIBLE);
-                        tvNull.setText("无网络连接。。。");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            public void onFinishTask(int pageNum) {
+                pageNumber =  pageNum;
             }
-
-            @Override
-            public void onError(Exception e) {
-                tvNull.setText("网络请求出错");
-            }
-        });
+        }).execute();
+//        HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
+//            @Override
+//            public void onFinish(String response) {
+//                try {
+//                    JSONObject obj = new JSONObject(response);
+//                    JSONObject msg = obj.optJSONObject("msg");
+//                    pageNumber = msg.getInt("pageNumber");
+//                    JSONArray jsonArray = msg.optJSONArray("close");
+//                    count = msg.optInt("count");
+//                    if (pageNumber == 1) {
+//                        closeList.clear();
+//                    } else {
+//                    }
+//                    if (jsonArray != null) {
+//                        closeList.addAll(JSONUtil.getJsonList(jsonArray.toString(), Close.class));
+//                        showCloseAdapter.notifyDataSetChanged();
+//                    }
+//                    tvNull.setVisibility(View.GONE);
+//                    if (pageNumber == 1 && closeList.size() <= 0) {
+//                        tvNull.setVisibility(View.VISIBLE);
+//                        tvNull.setText("无网络连接。。。");
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                tvNull.setText("网络请求出错");
+//            }
+//        });
     }
 
     public void setListeners(){
@@ -135,7 +146,9 @@ public class IndexFragment extends Fragment implements View.OnClickListener,Swip
                     //上滑ListView加载下一页数据
                     if (firstVisibleItem > lastVisiblePosition) {
                         String address = baseUrl + (pageNumber + 1);
+                        swipeRefreshLayout.setRefreshing(true);
                         getClose(address);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                     lastVisiblePosition = firstVisibleItem;
                 }
@@ -156,7 +169,12 @@ public class IndexFragment extends Fragment implements View.OnClickListener,Swip
     @Override
     public void onRefresh() {
         String address = baseUrl + pageNumber;
-        getClose(address);
-        swipeRefreshLayout.setRefreshing(false);
+        if(isConnection){
+            getClose(address);
+            swipeRefreshLayout.setRefreshing(false);
+        }else{
+            Toast.makeText(getActivity(), "无网络连接", Toast.LENGTH_LONG).show();
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 }

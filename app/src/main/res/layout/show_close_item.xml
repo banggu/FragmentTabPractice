@@ -15,7 +15,6 @@
                 android:id="@+id/ivCloseImg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher"
                 android:scaleType="centerCrop"/>
         </LinearLayout>
         <LinearLayout
@@ -28,13 +27,11 @@
                 android:id="@+id/tvCloseName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tvCloseName"
                 android:textSize="16sp"/>
             <TextView
                 android:id="@+id/tvClosePrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tvClosePrice"
                 android:textSize="16sp"
                 android:textColor="@color/red"/>
         </LinearLayout>

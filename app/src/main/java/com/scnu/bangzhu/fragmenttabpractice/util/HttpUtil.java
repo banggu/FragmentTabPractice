@@ -1,9 +1,12 @@
 package com.scnu.bangzhu.fragmenttabpractice.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -47,5 +50,31 @@ public class HttpUtil {
                 }
             }
         }).start();
+    }
+
+    public static String get(String address) throws IOException{
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(address);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0");
+            if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while((line = in.readLine()) != null){
+                    response.append(line);
+                }
+                in.close();
+                return response.toString();
+            }else{
+                throw new IOException("Network Error - response code: " + urlConnection.getResponseCode());
+            }
+        } finally {
+            if(urlConnection != null){
+                urlConnection.disconnect();
+            }
+        }
     }
 }

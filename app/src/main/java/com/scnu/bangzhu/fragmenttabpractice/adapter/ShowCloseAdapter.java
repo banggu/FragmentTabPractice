@@ -91,20 +91,16 @@ public class ShowCloseAdapter extends BaseAdapter {
 //        imageLoader = ImageLoader.getInstance();
 //        imageLoader.displayImage(close.peImg, holder.ivCloseImg);
         holder.ivCloseImg.setTag(close.peImg);
-        holder.ivCloseImg.setImageResource(R.drawable.ic_launcher);
-
         asyncBitmapLoader.showBitmapFromUrl(holder.ivCloseImg, close.peImg); ;
-//        if(bitmap == null){
-//            holder.ivCloseImg.setImageResource(R.drawable.ic_launcher);
-//        }
-//        else{
-//            holder.ivCloseImg.setImageBitmap(bitmap);
-//        }
-        Log.i("ImageUrl",close.peImg);
         holder.tvCloseName.setText(close.name);
         holder.tvClosePrice.setText(close.price+"");
         return convertView;
     }
+
+    public void refreshCloseList(List<Close> closeList){
+
+    }
+
     public final class ViewHolder{
         public ImageView ivCloseImg;
         public TextView tvCloseName;
